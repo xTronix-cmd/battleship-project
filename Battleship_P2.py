@@ -55,8 +55,8 @@ class BattleShip:
                 else:
                     print("Please choose up, down, left, or right for direction")
 
-                ships_coordinates.append([start_x, end_x, start_y,end_y])
-                ships_entered += 1
+                self.ships_coordinates.append([start_x, end_x, start_y,end_y])
+                self.ships_entered += 1
 
             # Create Grid
             for x in range(self.row):
@@ -66,14 +66,14 @@ class BattleShip:
                 self.grid.append(rows)
 
             for ships in range(self.num_of_ships):
-                for x in range(ships_coordinates[ships][0], ships_coordinates[ships][1]):
-                    for y in range(ships_coordinates[ships][2], ships_coordinates[ships][3]):
+                for x in range(self.ships_coordinates[ships][0], self.ships_coordinates[ships][1]):
+                    for y in range(self.ships_coordinates[ships][2], self.ships_coordinates[ships][3]):
                         self.grid[x][y] = "[]"
 
             temp_turn = self.player_turn
             if temp_turn == 1:
                 self.player_one_coordinates = self.ships_coordinates
-                self.player_one_grid = grid
+                self.player_one_grid = self.grid
                 self.grid = []
                 self.ships_coordinates = []
                 print("\nPlayer 1's grid\n")
@@ -119,7 +119,7 @@ class BattleShip:
             if self.player_turn == 1:
                 self.grid = self.player_two_grid
                 self.ships_coordinates = self.player_two_coordinates
-            elif player_turn == 2:
+            elif self.player_turn == 2:
                 self.grid = self.player_one_grid
                 self.ships_coordinates = self.player_one_coordinates
             

@@ -16,3 +16,5 @@ Discription: Battleship console version
 	'[]' = ship
 	'X' = missed shot
 """
+## Subheader:
+xtronix-Lappy
