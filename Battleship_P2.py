@@ -1,5 +1,5 @@
 class BattleShip:
-    show_player_ship = False # Set this to True if you want to see where the ships on the grid.
+    show_player_ship = True # Set this to True if you want to see where the ships on the grid.
     game_over = False
     player_one_sunk = 0
     player_two_sunk = 0
@@ -24,95 +24,110 @@ class BattleShip:
         self.player_turn = int(input("Who would like to go first? (1 or 2) "))
 
     def start_game(self):
-        for players in range(self.num_of_players):
+        for players in range(self.num_of_players):  # self.num_of_players = 2
             print("\nIt's Player {}'s turn".format(self.player_turn))
-            while ships_entered < self.num_of_ships:
-                start_x = int(input("Enter X: "))
-                start_y = int(input("Enter Y: "))
-                end_x, end_y = start_x+1, start_y+1
 
-                self.ship_direction = input("Which direction (up,down, left, or right) would you like to place your ship? ")
-                self.ship_direction = self.ship_direction.casefold()
+            self.enter_ship(self.player_turn)
 
-                if self.ship_direction == "up":
-                    if start_x - self.ships_length < 0:
-                        print("Sorry, placement is out of grid's boundary")
-                    start_x = start_x - self.ships_length + 1
 
-                elif self.ship_direction == "down":
-                    if start_x + self.ships_length >= self.grid_size:
-                        print("Sorry, placement is out of grid's boundary")
-                    end_x = start_x + self.ships_length
+    # Place ships on the grid
+    def enter_ship(self, player_turn):
+        for ships_entered in range(self.num_of_ships):
+            start_x = int(input("Enter X: "))
+            start_y = int(input("Enter Y: "))
+            end_x, end_y = start_x+1, start_y+1
 
-                elif self.ship_direction == "left":
-                    if start_y - self.ships_length < 0:
-                        print("Sorry, placement is out of grid's boundary")
-                    start_y = start_y - self.ships_length + 1
-                elif self.ship_direction == "right":
-                    if start_y + self.ships_length >= self.grid_size:
-                        print("Sorry, placement is out of grid's boundary")
-                    end_y = start_y + self.ships_length
-                else:
-                    print("Please choose up, down, left, or right for direction")
+            self.ship_direction = input("Which direction (U, D, L, R) would you like to place your ship? ")
+            self.ship_direction = self.ship_direction.casefold()
 
-                self.ships_coordinates.append([start_x, end_x, start_y,end_y])
-                self.ships_entered += 1
+            if self.ship_direction == "u" and start_x - self.ships_length >= 0:
+                    # print("Sorry, placement is out of grid's boundary")
+                start_x = start_x - self.ships_length + 1
 
-            # Create Grid
-            for x in range(self.row):
-                rows = []
-                for y in range(self.col):
-                    rows.append(".")
-                self.grid.append(rows)
+            elif self.ship_direction == "d" and start_x + self.ships_length < self.grid_size:
+                    # print("Sorry, placement is out of grid's boundary")
+                end_x = start_x + self.ships_length
 
-            for ships in range(self.num_of_ships):
-                for x in range(self.ships_coordinates[ships][0], self.ships_coordinates[ships][1]):
-                    for y in range(self.ships_coordinates[ships][2], self.ships_coordinates[ships][3]):
-                        self.grid[x][y] = "[]"
+            elif self.ship_direction == "l" and start_y - self.ships_length >= 0:
+                    # print("Sorry, placement is out of grid's boundary")
+                start_y = start_y - self.ships_length + 1
+            elif self.ship_direction == "r" and start_y + self.ships_length < self.grid_size:
+                    # print("Sorry, placement is out of grid's boundary")
+                end_y = start_y + self.ships_length
+            else:
+                print("Sorry, placement is out of grid's boundary")
+                print("Please choose up, down, left, or right for direction")
 
-            temp_turn = self.player_turn
-            if temp_turn == 1:
-                self.player_one_coordinates = self.ships_coordinates
-                self.player_one_grid = self.grid
-                self.grid = []
-                self.ships_coordinates = []
-                print("\nPlayer 1's grid\n")
-                
-                for x in range(len(self.player_one_grid)):
-                    for y in range(len(self.player_one_grid[x])):
-                        if self.player_one_grid[x][y] == "[]":
-                            if self.show_player_ship:
-                                print("[]", end="")
-                            else:
-                                print(".", end=" ")
+            self.ships_coordinates.append([start_x, end_x, start_y,end_y])
+        
+        if player_turn == 1:
+            self.player_one_coordinates = self.ships_coordinates.copy()
+            self.player_turn = 2
+        elif player_turn == 2:
+            self.player_two_coordinates = self.ships_coordinates.copy()
+            self.player_turn = 1
+            # self.ships_entered += 1
+
+    # Create Grid
+    def create_grid(self):
+        # Making the blank grid
+        for x in range(self.row):
+            rows = []
+            for y in range(self.col):
+                rows.append(".")
+            self.grid.append(rows)
+
+        # Placing the ships on the grid 
+        for ships in range(self.num_of_ships):
+            for x in range(self.ships_coordinates[ships][0], self.ships_coordinates[ships][1]):  # self.ships_coordinates[#ship][start_x] self.ships_coordinates[#ship][end_x]
+                for y in range(self.ships_coordinates[ships][2], self.ships_coordinates[ships][3]): # self.ships_coordinates[#ship][start_y] self.ships_coordinates[#ship][end_y]
+                    self.grid[x][y] = "O"  # updates the grid with ships in placed
+
+        temp_turn = self.player_turn
+        if temp_turn == 1:
+            self.player_one_coordinates = self.ships_coordinates
+            self.player_one_grid = self.grid  # copied the grid with ships for player one
+            self.grid = []  # resets the grid
+            self.ships_coordinates = []
+            print("\nPlayer 1's grid\n")
+
+            # self.player_one_grid is a list of 2x2 matrix
+            for x in range(len(self.player_one_grid)):  # x is row
+                for y in range(len(self.player_one_grid[x])):  # y is column
+                    if self.player_one_grid[x][y] == "O":
+                        if self.show_player_ship:
+                            print("D", end="")
                         else:
-                            print(self.player_one_grid[x][y], end=" ")
-                    print("")
-                self.player_turn = 2 # Switch Player
-                self.ships_entered = 0
-                continue
+                            print(".", end=" ")
+                    else:
+                        print(self.player_one_grid[x][y], end=" ")
+                print("")  # prints a newline after each row of the grid
 
-            if temp_turn == 2:
-                self.player_two_coordinates = self.ships_coordinates
-                self.player_two_grid = self.grid
-                self.grid = []
-                self.ships_coordinates = []
-                print("\nPlayer 2's grid\n")
+            self.player_turn = 2 # Switch Player
+            self.ships_entered = 0
+            continue
 
-                for x in range(len(self.player_two_grid)):
-                    for y in range(len(self.player_two_grid[x])):
-                        if self.player_two_grid[x][y] == "[]":
-                            if self.show_player_ship:
-                                print("[]", end="")
-                            else:
-                                print(".", end=" ")
+        if temp_turn == 2:
+            self.player_two_coordinates = self.ships_coordinates
+            self.player_two_grid = self.grid
+            self.grid = []
+            self.ships_coordinates = []
+            print("\nPlayer 2's grid\n")
+
+            for x in range(len(self.player_two_grid)):
+                for y in range(len(self.player_two_grid[x])):
+                    if self.player_two_grid[x][y] == "O":
+                        if self.show_player_ship:  # This is for debugging. It shows where the player's ships are placed on the grid
+                            print("D", end="")
                         else:
-                            print(self.player_two_grid[x][y], end=" ")
-                    print("")
-                self.player_turn = 1 # Switch Player
-                self.ships_entered = 0
-                continue
-            print("")
+                            print(".", end=" ")
+                    else:
+                        print(self.player_two_grid[x][y], end=" ")
+                print("")
+            self.player_turn = 1 # Switch Player
+            self.ships_entered = 0
+            continue
+        print("")
 
     def proccess_game(self):
         while game_over == False:
