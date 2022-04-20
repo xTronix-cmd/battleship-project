@@ -19,16 +19,20 @@ class BattleShip:
         self.temp_turn = 0       
         self.ship_direction  = ""
 
+    def start_game(self):
         self.num_of_ships = int(input("Enter number of ships for the game: "))
         self.ships_length = int(input("Enter the length of all the ships: "))
         self.player_turn = int(input("Who would like to go first? (1 or 2) "))
 
-    def start_game(self):
         for players in range(self.num_of_players):  # self.num_of_players = 2
             print("\nIt's Player {}'s turn".format(self.player_turn))
-
             self.enter_ship(self.player_turn)
 
+        print("\nPlayer 1's grid\n")
+        self.player_one_grid = self.create_grid(self.player_one_coordinates)
+
+        print("\nPlayer 2's grid\n")
+        self.player_two_grid = self.create_grid(self.player_two_coordinates)
 
     # Place ships on the grid
     def enter_ship(self, player_turn):
@@ -60,6 +64,7 @@ class BattleShip:
 
             self.ships_coordinates.append([start_x, end_x, start_y,end_y])
         
+        # After all ships coordinates been entered, copy it to the corresponding player's coordinates
         if player_turn == 1:
             self.player_one_coordinates = self.ships_coordinates.copy()
             self.player_turn = 2
@@ -69,7 +74,7 @@ class BattleShip:
             # self.ships_entered += 1
 
     # Create Grid
-    def create_grid(self):
+    def create_grid(self, ships_coordinates):
         # Making the blank grid
         for x in range(self.row):
             rows = []
@@ -79,58 +84,28 @@ class BattleShip:
 
         # Placing the ships on the grid 
         for ships in range(self.num_of_ships):
-            for x in range(self.ships_coordinates[ships][0], self.ships_coordinates[ships][1]):  # self.ships_coordinates[#ship][start_x] self.ships_coordinates[#ship][end_x]
-                for y in range(self.ships_coordinates[ships][2], self.ships_coordinates[ships][3]): # self.ships_coordinates[#ship][start_y] self.ships_coordinates[#ship][end_y]
+            for x in range(ships_coordinates[ships][0], ships_coordinates[ships][1]):  # self.ships_coordinates[#ship][start_x] self.ships_coordinates[#ship][end_x]
+                for y in range(ships_coordinates[ships][2], ships_coordinates[ships][3]): # self.ships_coordinates[#ship][start_y] self.ships_coordinates[#ship][end_y]
                     self.grid[x][y] = "O"  # updates the grid with ships in placed
 
-        temp_turn = self.player_turn
-        if temp_turn == 1:
-            self.player_one_coordinates = self.ships_coordinates
-            self.player_one_grid = self.grid  # copied the grid with ships for player one
-            self.grid = []  # resets the grid
-            self.ships_coordinates = []
-            print("\nPlayer 1's grid\n")
 
-            # self.player_one_grid is a list of 2x2 matrix
-            for x in range(len(self.player_one_grid)):  # x is row
-                for y in range(len(self.player_one_grid[x])):  # y is column
-                    if self.player_one_grid[x][y] == "O":
-                        if self.show_player_ship:
-                            print("D", end="")
-                        else:
-                            print(".", end=" ")
+        # Printing the ships on the grid
+        for x in range(len(self.grid)):  # x is row
+            for y in range(len(self.grid[x])):  # y is column
+                if self.grid[x][y] == "O":
+                    if self.show_player_ship:
+                        print("D", end="")
                     else:
-                        print(self.player_one_grid[x][y], end=" ")
-                print("")  # prints a newline after each row of the grid
-
-            self.player_turn = 2 # Switch Player
-            self.ships_entered = 0
-            continue
-
-        if temp_turn == 2:
-            self.player_two_coordinates = self.ships_coordinates
-            self.player_two_grid = self.grid
-            self.grid = []
-            self.ships_coordinates = []
-            print("\nPlayer 2's grid\n")
-
-            for x in range(len(self.player_two_grid)):
-                for y in range(len(self.player_two_grid[x])):
-                    if self.player_two_grid[x][y] == "O":
-                        if self.show_player_ship:  # This is for debugging. It shows where the player's ships are placed on the grid
-                            print("D", end="")
-                        else:
-                            print(".", end=" ")
-                    else:
-                        print(self.player_two_grid[x][y], end=" ")
-                print("")
-            self.player_turn = 1 # Switch Player
-            self.ships_entered = 0
-            continue
-        print("")
+                        print(".", end=" ")
+                else:
+                    print(self.grid[x][y], end=" ")
+            print("")  # prints a newline after each row of the grid
+            
+        return self.grid
 
     def proccess_game(self):
         while game_over == False:
+            # copies player's grid to game's grid and player's coordinates to ships coordinates
             if self.player_turn == 1:
                 self.grid = self.player_two_grid
                 self.ships_coordinates = self.player_two_coordinates
@@ -144,11 +119,12 @@ class BattleShip:
 
             # Marks where the bullet landed on the player's grid
             if self.grid[bullet_x][bullet_y] == ".":
-                self.grid[bullet_x][bullet_y] = "X"
-            elif self.grid[bullet_x][bullet_y] == "[]":
-                self.grid[bullet_x][bullet_y] = "+"
+                self.grid[bullet_x][bullet_y] = "X"  # Shot Missed
+            elif self.grid[bullet_x][bullet_y] == "O":
+                self.grid[bullet_x][bullet_y] = "+"  # Shot Hit
+                # This marks where the bullet hit on the player's grid
                 if self.player_turn == 1:
-                    self.player_two_grid = self.grid
+                    self.player_two_grid = self.grid  
                 elif self.player_turn == 2:
                     self.player_one_grid = self.grid
 
@@ -162,9 +138,9 @@ class BattleShip:
                                     hit += 1
                             if hit == self.ships_length:
                                 print("Player {} sunk a ship".format(self.player_turn))
-                                self.ship_sunk = 1
+                                self.ship_sunk = 1  # what is this number?
                                 if self.player_turn == 1:
-                                    self.player_one_sunk += self.ship_sunk
+                                    self.player_one_sunk += self.ship_sunk  # why use this assignment expression?
                                 elif self.player_turn == 2:
                                     self.player_two_sunk += self.ship_sunk
 
@@ -184,12 +160,15 @@ class BattleShip:
             print("\nPlayer {}'s grid".format(self.player_turn))
             for x in range(len(self.grid)):
                 for y in range(len(self.grid[x])):
-                    if self.grid[x][y] == "[]":
+                    if self.grid[x][y] == "O":
                         if self.show_player_ship:
-                            print("[]", end="")
+                            print("D", end="")
                         else:
                             print(".", end=" ")
                     else:
                         print(self.grid[x][y], end=" ")
                 print("")
             print("")
+
+game = BattleShip()
+game.start_game()
