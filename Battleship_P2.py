@@ -23,25 +23,28 @@ class BattleShip:
         # Create the row alphabet
         for char in range(65, 65 + self.grid_size):
             self.row_alphabet.append(chr(char))
-        
-        # print(len(self.row_alphabet))
-        # print(self.row_alphabet)
 
+    # Initialize/creates an emptry grid of 10x10
+    def empty_grid(self):
+        self.grid = []
+        # for loop to make the blank grid 10x10 matrix
+        for x in range(self.row):
+            rows = []
+            for y in range(self.col):
+                rows.append(".")
+            self.grid.append(rows)
+        
     def start_game(self):
         self.num_of_ships = int(input("Enter number of ships for the game: "))
         self.ships_length = int(input("Enter the length of all the ships: "))
         self.player_turn = int(input("Who would like to go first? (1 or 2) "))
 
-        for players in range(self.num_of_players):  # self.num_of_players = 2
+        for player in range(self.num_of_players):  # self.num_of_players = 2
             print("\nIt's Player {}'s turn".format(self.player_turn))
 
-            # for loop to make the blank grid 10x10 matrix
-            for x in range(self.row):
-                rows = []
-                for y in range(self.col):
-                    rows.append(".")
-                self.grid.append(rows)
             
+            self.empty_grid()  # creates an empty grid
+
             # This is to label the columns of the grid 0-9
             print(" ", end=" ")
             for column_label in range(self.grid_size):
@@ -49,9 +52,6 @@ class BattleShip:
             
             print()
 
-            # Printing the blank grid
-            # print(len(self.row_alphabet))
-            # print(self.row_alphabet)
             for x in range(len(self.grid)):  # x is row
                 print(self.row_alphabet[x], end=" ")
                 for y in range(len(self.grid[x])):  # y is column
@@ -66,8 +66,6 @@ class BattleShip:
                 self.player_two_coordinates = self.enter_ship()
                 self.player_turn = 1
             
-            self.grid = []
-
         print("\nPlayer 1's grid\n")
         self.player_one_grid = self.create_grid(self.player_one_coordinates.copy())
         print(f"Player one coordinates: {self.player_one_coordinates}")
@@ -81,7 +79,8 @@ class BattleShip:
     # Place ships on the grid
     def enter_ship(self):
         player_coordinates = []
-        for ships_entered in range(self.num_of_ships):
+        for ship in range(self.num_of_ships):
+            # CAPTURE user input error! /* must be fixed */
             # This block of code is to take the coordinate input for the ships
             chosen_coordinates = input(": ")  # ie. A4 would be 0, 4 on the x,y coordinate
             chosen_coordinates = chosen_coordinates.upper()
@@ -89,25 +88,19 @@ class BattleShip:
             start_y = int(chosen_coordinates[1])
             end_x, end_y = start_x+1, start_y+1
 
-            # self.ship_direction = input("Which direction (U, D, L, R) would you like to place your ship? ")
-            # self.ship_direction = self.ship_direction.casefold()
-
             chosen_direction = input("Which direction (U, D, L, R) would you like to place your ship? ")
             chosen_direction = chosen_direction.casefold()
             if chosen_direction in self.ship_direction:
                 if chosen_direction == "u" and start_x - self.ships_length >= 0:
-                        # print("Sorry, placement is out of grid's boundary")
                     start_x = start_x - self.ships_length + 1
 
                 elif chosen_direction == "d" and start_x + self.ships_length < self.grid_size:
-                        # print("Sorry, placement is out of grid's boundary")
                     end_x = start_x + self.ships_length
 
                 elif chosen_direction == "l" and start_y - self.ships_length >= 0:
-                        # print("Sorry, placement is out of grid's boundary")
                     start_y = start_y - self.ships_length + 1
+
                 elif chosen_direction == "r" and start_y + self.ships_length < self.grid_size:
-                        # print("Sorry, placement is out of grid's boundary")
                     end_y = start_y + self.ships_length
                 else:
                     print("Sorry, placement is out of grid's boundary")
@@ -117,24 +110,12 @@ class BattleShip:
             player_coordinates.append([start_x, end_x, start_y,end_y])
         
         return player_coordinates
-        # After all ships coordinates been entered, copy it to the corresponding player's coordinates
-        # if player_turn == 1:
-        #     self.player_one_coordinates = self.ships_coordinates.copy()
-        #     self.player_turn = 2
-        # elif player_turn == 2:
-        #     self.player_two_coordinates = self.ships_coordinates.copy()
-        #     self.player_turn = 1
 
     # Create Grid
     def create_grid(self, ships_coordinates):
         # Making the blank grid
-        self.grid = []
-        for x in range(self.row):
-            rows = []
-            for y in range(self.col):
-                rows.append(".")
-            self.grid.append(rows)
-
+        self.empty_grid()
+        
         # Placing the ships on the grid 
         for ships in range(self.num_of_ships):
             for x in range(ships_coordinates[ships][0], ships_coordinates[ships][1]):  # self.ships_coordinates[#ship][start_x] self.ships_coordinates[#ship][end_x]
