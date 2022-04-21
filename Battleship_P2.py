@@ -42,6 +42,7 @@ class BattleShip:
             
             print()
             
+            # Create the row alphabet
             for char in range(65, 65 + self.grid_size):
                 self.row_alphabet.append(chr(char))
 
@@ -74,8 +75,6 @@ class BattleShip:
             chosen_coordinates = chosen_coordinates.upper()
             start_x = self.row_alphabet.index(chosen_coordinates[0])
             start_y = int(chosen_coordinates[1])
-            # start_x = int(input("Enter X: "))
-            # start_y = int(input("Enter Y: "))
             end_x, end_y = start_x+1, start_y+1
 
             self.ship_direction = input("Which direction (U, D, L, R) would you like to place your ship? ")
@@ -108,7 +107,6 @@ class BattleShip:
         elif player_turn == 2:
             self.player_two_coordinates = self.ships_coordinates.copy()
             self.player_turn = 1
-            # self.ships_entered += 1
 
     # Create Grid
     def create_grid(self, ships_coordinates):
@@ -132,7 +130,6 @@ class BattleShip:
         
         print()
         
-
         # Printing the ships on the grid
         for x in range(len(self.grid)):  # x is row
             print(self.row_alphabet[x], end=" ")
