@@ -67,11 +67,11 @@ class BattleShip:
                 self.player_turn = 1
             
         print("\nPlayer 1's grid\n")
-        self.player_one_grid = self.create_grid(self.player_one_coordinates.copy())
+        self.player_one_grid = self.create_grid(self.player_one_coordinates)
         print(f"Player one coordinates: {self.player_one_coordinates}")
 
         print("\nPlayer 2's grid\n")
-        self.player_two_grid = self.create_grid(self.player_two_coordinates.copy())
+        self.player_two_grid = self.create_grid(self.player_two_coordinates)
         print(f"Player two coordinates: {self.player_two_coordinates}")
 
         self.proccess_game()
@@ -118,8 +118,8 @@ class BattleShip:
         
         # Placing the ships on the grid 
         for ships in range(self.num_of_ships):
-            for x in range(ships_coordinates[ships][0], ships_coordinates[ships][1]):  # self.ships_coordinates[#ship][start_x] self.ships_coordinates[#ship][end_x]
-                for y in range(ships_coordinates[ships][2], ships_coordinates[ships][3]): # self.ships_coordinates[#ship][start_y] self.ships_coordinates[#ship][end_y]
+            for x in range(ships_coordinates[ships][0], ships_coordinates[ships][1]):  
+                for y in range(ships_coordinates[ships][2], ships_coordinates[ships][3]): 
                     self.grid[x][y] = "O"  # updates the grid with ships in placed
 
         print(" ", end=" ")
